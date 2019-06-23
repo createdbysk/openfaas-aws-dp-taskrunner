@@ -6,11 +6,12 @@ guard-%:
 	fi
 
 build:
+	# chown app /var/spool/cron/atjobs
+	chmod +x ./run.sh
 	curl -o TaskRunner.jar \
 		https://s3.amazonaws.com/datapipeline-us-east-1/us-east-1/software/latest/TaskRunner/TaskRunner-1.0.jar
 
 run: guard-WORKER_GROUP guard-REGION guard-LOG_URI
-	java -jar TaskRunner.jar \
-    --workerGroup=${WORKER_GROUP} \
-    --region=${REGION} \
-    --logUri=${LOG_URI}
+	echo Schedule ./run.sh to run 1 minute from now.
+	at now +1 minutes -f ./run.sh
+	echo Schedule created.

@@ -14,23 +14,25 @@ RUN apt-get update \
         jq      \
         default-jre \
         make \
+        at \
     && rm -rf /var/lib/apt/lists/*
 
-RUN make build
-
 RUN chmod +x docker_entrypoint.sh \
+    && chmod +x function_entrypoint.sh \
     && chmod +x entrypoint_support.sh
 
 # Add non root user
-RUN addgroup app \
-    && yes Y | adduser --force-badname --disabled-password --no-create-home --ingroup app app
-RUN chown app /home/app
+# RUN addgroup app \
+#     && yes Y | adduser --force-badname --disabled-password --no-create-home --ingroup app app
+# RUN chown app /home/app
+
+RUN make build
 
 WORKDIR /home/app
 
-USER app
+# USER app
 
-ENV fprocess="/home/app/docker_entrypoint.sh"
+ENV fprocess="/home/app/function_entrypoint.sh"
 # Set to true to see request in function logs
 ENV write_debug="true"
 
@@ -38,4 +40,4 @@ EXPOSE 8080
 
 HEALTHCHECK --interval=3s CMD [ -e /tmp/.lock ] || exit 1
 
-CMD ["fwatchdog"]
+CMD ["/home/app/docker_entrypoint.sh"]
