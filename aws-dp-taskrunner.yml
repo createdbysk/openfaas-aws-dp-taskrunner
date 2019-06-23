@@ -1,0 +1,15 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:31112
+functions:
+  dpk:
+    lang: dockerfile
+    image: satvidh/openfaas-aws-dp-taskrunner:latest
+    labels:
+      # com.openfaas.scale.zero: true
+      com.openfaas.scale.min: 1
+      com.openfaas.scale.max: 1
+    annotations:
+      # Modify the role as necessary for your use case.
+      iam.amazonaws.com/role: DataPipelineDefaultResourceRole
